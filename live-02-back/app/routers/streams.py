@@ -48,6 +48,16 @@ def start_stream(payload: StartStreamRequest):
 
     stream_id = str(uuid.uuid4())
 
+    # Garantir que o host exista na tabela users (FK streams_host_id -> users)
+    try:
+        supabase.table("users").upsert({
+            "id": payload.host_id,
+            "nickname": f"host_{payload.host_id[:8]}",
+            "role": "host",
+        }).execute()
+    except Exception as e:
+        print(f"users upsert warn: {e}")
+
     data = {
         "id": stream_id,
         "host_id": payload.host_id,

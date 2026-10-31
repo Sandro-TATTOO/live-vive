@@ -61,13 +61,29 @@ def send_message(msg: MessageCreate) -> Message:
         raise ValueError("Stream not live")
     
     # Insert
-    data = msg.dict()
-    result = supabase.table('stream_messages').insert(data).execute()
-    
+    data = {
+        "stream_id": msg.stream_id,
+        "user_id": msg.user_id,
+        "message": msg.content,
+        "message_type": msg.message_type.value if hasattr(msg.message_type, "value") else str(msg.message_type),
+        "is_deleted": False,
+        "nickname": f"user_{msg.user_id[:8]}",
+    }
+    result = supabase.table("messages").insert(data).execute()
+
     if result.data:
         msg_db = result.data[0]
-        return Message(**msg_db)
+        return Message(
+            id=str(msg_db["id"]),
+            stream_id=msg_db["stream_id"],
+            user_id=msg_db["user_id"],
+            message_type=MessageType(msg_db.get("message_type", "chat")),
+            content=msg_db["message"],
+            created_at=datetime.fromisoformat(str(msg_db["created_at"]).replace("Z", "+00:00")),
+            is_deleted=msg_db.get("is_deleted", False),
+        )
     raise ValueError("Failed to save message")
+
 
 def get_messages(stream_id: str, limit: int = 50, offset: int = 0) -> List[Message]:
     """GET messages paginadas DESC created_at"""
@@ -75,7 +91,7 @@ def get_messages(stream_id: str, limit: int = 50, offset: int = 0) -> List[Messa
     if not supabase:
         return []
     
-    result = supabase.table('stream_messages')\
+    result = supabase.table('messages')\
         .select('*')\
         .eq('stream_id', stream_id)\
         .eq('is_deleted', False)\
@@ -91,7 +107,7 @@ def delete_message(message_id: str, user_id: str) -> bool:
     if not supabase:
         return False
     
-    result = supabase.table('stream_messages')\
+    result = supabase.table('messages')\
         .update({'is_deleted': True})\
         .eq('id', message_id)\
         .eq('user_id', user_id)\
