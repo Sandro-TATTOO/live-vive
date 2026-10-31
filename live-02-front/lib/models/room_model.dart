@@ -1,1 +1,29 @@
-class RoomModel {\n  final String id;\n  final String name;\n  final String hostId;\n  final List<String> clientIds;\n\n  RoomModel({\n    required this.id,\n    required this.name,\n    required this.hostId,\n    this.clientIds = const [],\n  });\n\n  factory RoomModel.fromJson(Map<String, dynamic> json) {\n    return RoomModel(\n      id: json['id'],\n      name: json['name'],\n      hostId: json['host_id'],\n      clientIds: List<String>.from(json['client_ids'] ?? []),\n    );\n  }\n\n  Map<String, dynamic> toJson() => {\n    'id': id,\n    'name': name,\n    'host_id': hostId,\n    'client_ids': clientIds,\n  };\n}
+﻿class RoomModel {
+  final String id;
+  final String name;
+  final String hostId;
+  final List<String> clientIds;
+
+  RoomModel({
+    required this.id,
+    required this.name,
+    required this.hostId,
+    this.clientIds = const [],
+  });
+
+  factory RoomModel.fromJson(Map<String, dynamic> json) {
+    return RoomModel(
+      id: json['id'],
+      name: json['name'],
+      hostId: json['host_id'],
+      clientIds: List<String>.from(json['client_ids'] ?? []),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'host_id': hostId,
+    'client_ids': clientIds,
+  };
+}

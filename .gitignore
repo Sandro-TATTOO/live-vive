@@ -31,3 +31,9 @@ Thumbs.db
 # Arquivo grande / backups
 archive/
 _archived_*/
+
+# Flutter analyze logs
+analyze_*.txt
+fix_*.txt
+lr_*.txt
+server_*.txt

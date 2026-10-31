@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
 import '../services/stream_service.dart';
 import '../widgets/chat_overlay.dart';
@@ -13,53 +13,70 @@ class LiveRoomScreen extends StatefulWidget {
 
 class _LiveRoomScreenState extends State<LiveRoomScreen> {
   Room? room;
+  EventsListener<RoomEvent>? listener;
   bool _isConnected = false;
   int _viewersCount = 0;
-  Participant? _remoteParticipant;
-  final VideoRenderer _renderer = VideoRenderer();
+  VideoTrack? _remoteVideoTrack;
 
   @override
   void initState() {
     super.initState();
-    _renderer.initialize();
     StreamService.joinLive(widget.streamId);
     _connectToLive();
   }
 
   Future<void> _connectToLive() async {
     try {
-      // Token para VIEWER
       final tokenData = await StreamService.getLivekitToken(widget.streamId);
+      print('Conectando viewer a live ${widget.streamId}');
 
-      print('🔗 Conectando viewer a live ${widget.streamId}');
-
-      room = await Room.connect(
-        url: 'wss://livestreamapp-ghcjo92o.livekit.cloud', // LiveKit Cloud
-        token: tokenData['token'],
+      room = Room();
+      await room!.prepareConnection(
+        tokenData['server_url'] ?? 'wss://livestreamapp-ghcjo92o.livekit.cloud',
+        tokenData['token'] ?? '',
+      );
+      await room!.connect(
+        tokenData['server_url'] ?? 'wss://livestreamapp-ghcjo92o.livekit.cloud',
+        tokenData['token'] ?? '',
       );
 
-      room!.on<RemoteTrackAddedEvent>((event) {
-        print('📹 Remote track adicionado: ${event.remoteTrack.kind}');
-        setState(() {});
-      });
-
-      room!.on<ParticipantEvent>((event) {
-        print('👥 Participant update: ${event.participant.sid}');
-        setState(() {
-          _viewersCount = StreamService.fetchViewerCountSync(
-              widget.streamId); // Backend real-time
-          _remoteParticipant = room!.remoteParticipants.values.firstOrNull;
+      listener = room!.createListener();
+      listener!
+        ..on<RoomDisconnectedEvent>((_) {
+          if (mounted) setState(() => _isConnected = false);
+        })
+        ..on<ParticipantEvent>((_) {
+          _updateRemoteParticipant();
+        })
+        ..on<TrackSubscribedEvent>((_) {
+          _updateRemoteParticipant();
         });
-      });
 
-      setState(() {
-        _isConnected = true;
-      });
+      _updateRemoteParticipant();
+      if (mounted) setState(() => _isConnected = true);
     } catch (e) {
-      print('❌ Viewer erro: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro conectar live: $e')),
-      );
+      print('Viewer erro: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro conectar live: $e')),
+        );
+      }
+    }
+  }
+
+  void _updateRemoteParticipant() {
+    if (room == null) return;
+    final remote = room!.remoteParticipants.values.firstOrNull;
+    VideoTrack? videoTrack;
+    if (remote != null && remote.videoTrackPublications.isNotEmpty) {
+      final pub = remote.videoTrackPublications.first;
+      videoTrack = pub.track as VideoTrack?;
+    }
+    if (mounted) {
+      setState(() {
+        _remoteVideoTrack = videoTrack;
+        _viewersCount = room!.remoteParticipants.length + 1;
+      });
     }
   }
 
@@ -96,35 +113,26 @@ class _LiveRoomScreenState extends State<LiveRoomScreen> {
       ),
       body: Stack(
         children: [
-          // Video fullscreen
-          if (_isConnected && _remoteParticipant != null)
+          if (_isConnected && _remoteVideoTrack != null)
             Positioned.fill(
-              child: _remoteParticipant!.videoTracks.values.isNotEmpty
-                  ? VideoView(
-                      _remoteParticipant!.videoTracks.values.first.track!,
-                      renderer: _renderer,
-                      mirrorHorizontal: false,
-                      objectFit: VideoViewObjectFit.cover,
-                    )
-                  : const Center(
-                      child: Icon(Icons.videocam_off,
-                          color: Colors.white54, size: 100),
-                    ),
+              child: VideoTrackRenderer(_remoteVideoTrack!),
             )
-          else if (!_isConnected)
+          else if (_isConnected)
+            const Center(
+              child: Icon(Icons.videocam_off, color: Colors.white54, size: 100),
+            )
+          else
             const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(color: Colors.white),
                   SizedBox(height: 20),
-                  Text('Conectando à live...',
+                  Text('Conectando Ã  live...',
                       style: TextStyle(color: Colors.white)),
                 ],
               ),
             ),
-
-          // Chat overlay (bottom 40%)
           Positioned(
             bottom: 0,
             left: 0,
@@ -139,6 +147,7 @@ class _LiveRoomScreenState extends State<LiveRoomScreen> {
   @override
   void dispose() {
     StreamService.leaveLive(widget.streamId);
+    listener?.dispose();
     room?.disconnect();
     super.dispose();
   }
