@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 from app.config import settings
 from app.routers import auth, users, streams, payments, comments, test_db
@@ -7,9 +8,10 @@ from app.routers import auth, users, streams, payments, comments, test_db
 app = FastAPI(title="Live Backend", version="0.1.0")
 
 # CORS (dev: permissivo; prod: restringir via env)
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

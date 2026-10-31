@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/stream_model.dart';
 
 class StreamService {
+  // Altere para a URL do backend publicado (ex: https://seu-backend.railway.app)
   static const String _baseUrl = 'http://127.0.0.1:8000';
 
   // Lista lives (HomeScreen)
