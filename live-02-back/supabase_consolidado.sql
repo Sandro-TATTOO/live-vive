@@ -294,3 +294,16 @@ ON CONFLICT DO NOTHING;
 -- Habilitar Realtime para tabelas usadas no chat e presenca
 ALTER PUBLICATION supabase_realtime ADD TABLE stream_messages;
 ALTER PUBLICATION supabase_realtime ADD TABLE streams;
+
+-- ============ FIX FK streams_host_id ============
+-- Remover FK que exige host_id em users (host pode ser anonimo/UUID gerado)
+ALTER TABLE streams DROP CONSTRAINT IF EXISTS streams_host_id_fkey;
+
+-- ============ TABELA USERS (compatibilidade FK) ============
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  username TEXT,
+  email TEXT,
+  password TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
