@@ -289,3 +289,8 @@ INSERT INTO subscription_plans (name, price, duration_days) VALUES
   (''Semanal'', 9.99, 7),
   (''Mensal'', 29.99, 30)
 ON CONFLICT DO NOTHING;
+
+-- ============ REALTIME ============
+-- Habilitar Realtime para tabelas usadas no chat e presenca
+ALTER PUBLICATION supabase_realtime ADD TABLE stream_messages;
+ALTER PUBLICATION supabase_realtime ADD TABLE streams;

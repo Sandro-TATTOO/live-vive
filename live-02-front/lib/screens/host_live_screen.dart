@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:uuid/uuid.dart';
 import '../services/stream_service.dart';
+
 
 class HostLiveScreen extends StatefulWidget {
   final String title;
@@ -18,7 +20,19 @@ class _HostLiveScreenState extends State<HostLiveScreen> {
   LocalVideoTrack? _videoTrack;
   LocalAudioTrack? _audioTrack;
   bool _isConnected = false;
-  bool _isPublishing = false;
+  String _hostId = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _hostId = _isValidUuid(widget.hostId) ? widget.hostId : const Uuid().v4();
+    _startLive();
+  }
+
+  bool _isValidUuid(String s) {
+    final uuidRegex = RegExp(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
+    return uuidRegex.hasMatch(s);
+  }
 
   @override
   void initState() {
@@ -29,7 +43,7 @@ class _HostLiveScreenState extends State<HostLiveScreen> {
   Future<void> _startLive() async {
     try {
       // 1. Criar stream no backend
-      final res = await StreamService.startStream(widget.title, widget.hostId);
+      final res = await StreamService.startStream(widget.title, _hostId);
       streamId = res['stream_id']?.toString();
       if (streamId == null) throw Exception('stream_id null');
 
@@ -54,8 +68,8 @@ class _HostLiveScreenState extends State<HostLiveScreen> {
 
       // 5. Publicar tracks
       if (room!.localParticipant != null) {
-        await room!.localParticipant!.publishTrack(_videoTrack!);
-        await room!.localParticipant!.publishTrack(_audioTrack!);
+        await room!.localParticipant!.publishVideoTrack(_videoTrack!);
+        await room!.localParticipant!.publishAudioTrack(_audioTrack!);
       }
 
       setState(() => _isConnected = true);

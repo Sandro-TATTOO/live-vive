@@ -27,12 +27,12 @@ class MessageModel {
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel(
-      id: json[''id'']?.toString() ?? '''',
-      message: json[''content''] ?? json[''message''] ?? '''',
-      userId: json[''user_id'']?.toString() ?? '''',
-      streamId: json[''stream_id'']?.toString() ?? '''',
-      type: _parseType(json[''message_type''] ?? json[''type''] ?? ''chat''),
-      createdAt: DateTime.tryParse(json[''created_at'']?.toString() ?? '''') ?? DateTime.now(),
+      id: json['id']?.toString() ?? '',
+      message: json['content'] ?? json['message'] ?? '',
+      userId: json['user_id']?.toString() ?? '',
+      streamId: json['stream_id']?.toString() ?? '',
+      type: _parseType(json['message_type'] ?? json['type'] ?? 'chat'),
+      createdAt: DateTime.tryParse(json['created_at']?.toString() ?? '') ?? DateTime.now(),
     );
   }
 
@@ -40,13 +40,13 @@ class MessageModel {
 
   static MessageType _parseType(String typeStr) {
     switch (typeStr) {
-      case ''vip'':
+      case 'vip':
         return MessageType.vip;
-      case ''gift'':
+      case 'gift':
         return MessageType.gift;
-      case ''system'':
+      case 'system':
         return MessageType.system;
-      case ''moderator'':
+      case 'moderator':
         return MessageType.moderator;
       default:
         return MessageType.normal;
