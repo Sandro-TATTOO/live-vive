@@ -9,8 +9,8 @@ void main() async {
 
   // Init Supabase SEM auth anônima
   await Supabase.initialize(
-    url: 'YOUR_SUPABASE_URL', 
-    anonKey: 'YOUR_SUPABASE_ANON_KEY',
+    url: 'https://ircmrwpshelypddkbaye.supabase.co',
+    anonKey: 'sb_publishable_-U0PInJIeFofQ2gyZB4Vbg_mpbBKRe7',
   );
 
   runApp(

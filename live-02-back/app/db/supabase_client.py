@@ -21,7 +21,8 @@ def get_global_supabase() -> Optional[Client]:
     global supabase_global
     if supabase_global is None:
         try:
-            supabase_global = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
+            key = settings.SUPABASE_SERVICE_ROLE_KEY or settings.SUPABASE_KEY
+            supabase_global = create_client(settings.SUPABASE_URL, key)
             print("Global Supabase client created OK")
         except Exception as e:
             print(f"Global Supabase client FAILED: {str(e)[:100]} - Check .env")

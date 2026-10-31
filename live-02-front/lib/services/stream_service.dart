@@ -1,3 +1,5 @@
+import '../models/message_model.dart';
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -7,6 +9,53 @@ class StreamService {
   static const String _baseUrl = 'http://127.0.0.1:8000';
 
   // Lista lives (HomeScreen)
+
+  // Iniciar stream (host)
+  static Future<Map<String, dynamic>> startStream(String title, String hostId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/streams/start'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'title': title, 'host_id': hostId}),
+      );
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      }
+    } catch (e) {
+      print('startStream erro: $e');
+    }
+    return {'stream_id': 'fallback'};
+  }
+
+  // Encerrar stream
+  static Future<void> endStream(String streamId) async {
+    try {
+      await http.post(Uri.parse('$_baseUrl/streams/$streamId/end'));
+    } catch (e) {
+      print('endStream erro: $e');
+    }
+  }
+
+  // Token host
+  static Future<Map<String, dynamic>> getHostToken(String streamId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$_baseUrl/streams/$streamId/host-token'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      }
+    } catch (e) {
+      print('getHostToken erro: $e');
+    }
+    return {
+      'server_url': 'wss://livestreamapp-ghcjo92o.livekit.cloud',
+      'token': '',
+      'room': streamId,
+    };
+  }
+
   static Future<List<StreamModel>> fetchStreams() async {
     try {
       final response = await http.get(
@@ -110,4 +159,41 @@ class StreamService {
     }
     return 0;
   }
+
+  // Enviar mensagem via backend
+  static Future<void> sendMessage(String streamId, String userId, String content) async {
+    try {
+      await http.post(
+        Uri.parse('$_baseUrl/streams/$streamId/message'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'stream_id': streamId,
+          'user_id': userId,
+          'message_type': 'chat',
+          'content': content,
+        }),
+      );
+    } catch (e) {
+      print('sendMessage erro: $e');
+    }
+  }
+
+  // Buscar mensagens via backend
+  static Future<List<MessageModel>> fetchMessages(String streamId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$_baseUrl/streams/$streamId/messages?limit=50'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final list = data['messages'] as List;
+        return list.map((e) => MessageModel.fromJson(e)).toList();
+      }
+    } catch (e) {
+      print('fetchMessages erro: $e');
+    }
+    return [];
+  }
+
 }

@@ -1,4 +1,4 @@
-enum MessageType {
+﻿enum MessageType {
   normal,
   vip,
   gift,
@@ -25,26 +25,28 @@ class MessageModel {
     required this.createdAt,
   });
 
-  factory MessageModel.fromSupabase(Map<String, dynamic> json) {
+  factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel(
-      id: json['id'],
-      message: json['message'],
-      userId: json['user_id'],
-      streamId: json['stream_id'],
-      type: _parseType(json['type'] ?? 'normal'),
-      createdAt: DateTime.parse(json['created_at']),
+      id: json[''id'']?.toString() ?? '''',
+      message: json[''content''] ?? json[''message''] ?? '''',
+      userId: json[''user_id'']?.toString() ?? '''',
+      streamId: json[''stream_id'']?.toString() ?? '''',
+      type: _parseType(json[''message_type''] ?? json[''type''] ?? ''chat''),
+      createdAt: DateTime.tryParse(json[''created_at'']?.toString() ?? '''') ?? DateTime.now(),
     );
   }
 
+  factory MessageModel.fromSupabase(Map<String, dynamic> json) => MessageModel.fromJson(json);
+
   static MessageType _parseType(String typeStr) {
     switch (typeStr) {
-      case 'vip':
+      case ''vip'':
         return MessageType.vip;
-      case 'gift':
+      case ''gift'':
         return MessageType.gift;
-      case 'system':
+      case ''system'':
         return MessageType.system;
-      case 'moderator':
+      case ''moderator'':
         return MessageType.moderator;
       default:
         return MessageType.normal;

@@ -6,7 +6,8 @@ load_dotenv()
 class Settings:
     # Supabase
     SUPABASE_URL: str = os.getenv("SUPABASE_URL")
-    SUPABASE_KEY: str = os.getenv("SUPABASE_KEY")   # Use anon key aqui
+    SUPABASE_KEY: str = os.getenv("SUPABASE_KEY")   # publishable/anon key
+    SUPABASE_SERVICE_ROLE_KEY: str = os.getenv("SUPABASE_SERVICE_ROLE_KEY")  # secret key (backend)
 
     # LiveKit - COLOQUE AS CHAVES CORRETAS DO LIVEKIT CLOUD
     LIVEKIT_URL: str = os.getenv("LIVEKIT_URL", "wss://livestreamapp-ghcjo92o.livekit.cloud")

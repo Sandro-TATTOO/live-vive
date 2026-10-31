@@ -155,3 +155,25 @@ async def list_messages(stream_id: str, limit: int = Query(50, le=100), offset: 
     """GET mensagens paginadas stream"""
     messages = get_messages(stream_id, limit, offset)
     return {"messages": messages, "limit": limit, "offset": offset}
+
+
+# ==================== VIEWER PRESENCE ====================
+class JoinLeaveRequest(BaseModel):
+    user_id: str
+
+@router.post("/{stream_id}/join")
+async def join_stream_endpoint(stream_id: str, payload: JoinLeaveRequest):
+    try:
+        stats = join_stream(stream_id, payload.user_id)
+        return {"viewer_count": stats.viewer_count}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.post("/{stream_id}/leave")
+async def leave_stream_endpoint(stream_id: str, payload: JoinLeaveRequest):
+    try:
+        stats = leave_stream(stream_id, payload.user_id)
+        return {"viewer_count": stats.viewer_count}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
