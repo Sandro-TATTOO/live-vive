@@ -1,0 +1,128 @@
+# RELATÓRIO TÉCNICO - APP LIVE STREAMING FLUTTER
+## Live 02 Front - Estrutura completa + dependências (Abril 2024)
+
+## 🏗️ ARQUITETURA GERAL
+```
+FLUTTER WEB (Chrome) 
+├── STATE: Provider 6.1.2
+├── REALTIME: Supabase 2.6.1 (auth + postgres_changes)
+├── VIDEO: LiveKit 2.7.0 (viewer/publisher)
+├── HTTP: Backend FastAPI :8000
+├── SUPABASE: DB messages + auth anon
+└── MODEL-VIEW-SERVICE clean arch
+```
+
+**FLUXO**:
+```
+1. HomeScreen (Grid LiveCards)
+2. Tap → LiveRoomScreen(streamId)
+3. joinLive() → LiveKit.connect() + ChatOverlay
+4. leaveLive() + dispose()
+```
+
+---
+
+## 📦 DEPENDÊNCIAS (pubspec.yaml)
+```
+flutter: >=3.19.0
+http: ^1.6.0           # Backend API
+livekit_client: ^2.7.0 # LiveKit WebRTC
+provider: ^6.1.2       # State Management
+supabase_flutter: ^2.6.1 # Realtime DB + Auth
+flutter_lints: ^4.0.0 # Code quality
+
+platforms: web, android
+```
+
+---
+
+## 📁 ESTRUTURA ARQUIVOS (14 principais)
+```
+lib/
+├── main.dart                  # Entry + Supabase init
+├── models/
+│   └── stream_model.dart      # {id, title, thumbnail, viewerCount}
+├── services/
+│   └── stream_service.dart    # API + join/leave + token LiveKit
+├── screens/
+│   ├── home_screen.dart       # Grid 2x lives + refresh
+│   ├── live_room_screen.dart  # LiveKit viewer + chat overlay
+│   └── role_selection.dart    # (legacy)
+├── widgets/
+│   ├── live_card.dart         # Card thumbnail + LIVE badge
+│   └── chat_overlay.dart      # Supabase realtime chat
+├── core/
+│   └── supabase_config.dart   # Client config
+└── utils/
+    └── constants.dart         # URLs/keys
+
+root/
+├── pubspec.yaml
+├── CODIGOS_APP_FLUTTER.txt    # Códigos completos
+├── TODO.md                    # Próximos passos
+└── RELATORIO_TECNICO.txt      # Este arquivo
+```
+
+---
+
+## 🔧 FUNCIONALIDADES IMPLEMENTADAS
+| **Feature** | **Status** | **Detalhes** |
+|-------------|------------|--------------|
+| **Home Grid** | ✅ | 2 colunas, mock/real API, refresh |
+| **Live Card** | ✅ | Thumbnail, LIVE badge, viewers |
+| **Live Viewer** | ✅ | LiveKit connect, video fullscreen |
+| **Realtime Chat** | ✅ | Supabase stream messages/streamId |
+| **Viewer Presence** | ✅ | join/leave API calls |
+| **Error Handling** | ✅ | Fallbacks + SnackBars |
+| **Dark Theme** | ✅ | Material Dark |
+
+---
+
+## 🛠️ SERVIÇOS EXTERNOS
+```
+BACKEND FASTAPI (:8000):
+├── GET /streams/live          → List<StreamModel>
+├── GET /streams/{id}/viewer-token → LiveKit token
+├── POST /streams/{id}/join    → Presence (user_id)
+├── POST /streams/{id}/leave   → Presence
+└── GET /streams/{id}          → {viewer_count}
+
+SUPABASE:
+├── postgres_changes('messages')
+├── auth anon (currentUser.id)
+└── stream_id filter
+
+LIVEKIT CLOUD:
+└── wss://livestreamapp-ghcjo92o.livekit.cloud
+```
+
+---
+
+## 🚀 COMO EXECUTAR
+```
+1. flutter clean
+2. flutter pub get
+3. Backend FastAPI :8000 rodando
+4. flutter run -d chrome
+5. localhost → grid → live + chat
+```
+
+---
+
+## ⚠️ LIMITAÇÕES ATUAIS
+- LiveKit API linter (versão OK, ignore)
+- Backend endpoints pendentes
+- main.dart ainda RoleSelection (trocar HomeScreen)
+- No login (Supabase anon)
+
+---
+
+## 📈 PRÓXIMOS PASSOS (TODO.md)
+1. Backend todos endpoints
+2. main.dart → HomeScreen
+3. Login Supabase
+4. Presentes/VIP/Carteira
+5. Prod deploy (Firebase/Vercel)
+
+**MVP FUNCIONAL** ✅ Análise técnica completa!
+

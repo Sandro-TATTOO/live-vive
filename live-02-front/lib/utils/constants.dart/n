@@ -1,0 +1,1 @@
+class Constants {\n  static const String supabaseUrl = 'YOUR_SUPABASE_URL';\n  static const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';\n\n  static const Color primaryColor = Colors.blue;\n  static const String appName = 'Chat Puro';\n}

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <title>Live Test - Chat Puro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- LiveKit CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client@2/dist/livekit-client.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #0f1419 0%, #1a202c 100%); 
+            color: white; 
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            background: linear-gradient(45deg, #4f46e5, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(79, 70, 229, 0.5);
+        }
+        .video-container {
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            margin: 30px 0;
+        }
+        #video { 
+            width: 100%; 
+            height: 500px;
+            object-fit: cover;
+            display: block;
+        }
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+        #startCamera { 
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+            color: white; 
+            border: none; 
+            padding: 18px 40px; 
+            font-size: 1.2rem; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.4);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        #startCamera:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(79, 70, 229, 0.6);
+        }
+        #startCamera:active {
+            transform: translateY(-1px);
+        }
+        .status {
+            padding: 15px 30px;
+            border-radius: 50px;
+            margin: 20px auto;
+            font-size: 1.1rem;
+            font-weight: 600;
+            max-width: 300px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .live { background: #10b981; animation: pulse 2s infinite; }
+        .offline { background: #6b7280; }
+        .error { background: #ef4444; }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px #10b981; }
+            50% { box-shadow: 0 0 40px #10b981, 0 0 60px #10b981; }
+        }
+        .console {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            height: 250px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .console-title {
+            color: #4f46e5;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎥 LIVE STREAM</h1>
+        
+        <div class="status offline" id="status">OFFLINE</div>
+        
+        <div class="controls">
+            <button id="startCamera">🚀 START CAMERA + LIVEKIT</button>
+        </div>
+        
+        <div class="video-container">
+            <video id="video" autoplay playsinline muted controls></video>
+        </div>
+        
+        <div class="console">
+            <div class="console-title">📱 LOGS:</div>
+            <pre id="console-log">Aguardando clique...</pre>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+

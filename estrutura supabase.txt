@@ -1,0 +1,591 @@
+Agora vamos montar o diagrama completo do banco de dados da plataforma, organizado para que a IA do Supabase consiga entender e construir tudo de forma consistente.
+
+Vou estruturar em 6 módulos principais.
+
+🧱 Arquitetura geral do banco
+USERS
+│
+├─ wallets
+├─ subscriptions
+├─ followers
+│
+STREAMS
+│
+├─ messages
+├─ gifts
+├─ live_likes
+├─ gift_transactions
+│
+ECONOMY
+│
+├─ coins
+├─ creator_earnings
+├─ withdrawals
+│
+REWARDS
+│
+├─ ad_rewards
+├─ gift_rewards
+
+Streaming será feito com:
+
+LiveKit
+👤 1️⃣ Sistema de usuários
+
+Usuários são gerenciados pelo Supabase Auth.
+
+Tabela complementar:
+
+profiles
+
+Campos:
+
+id uuid primary key
+username text
+avatar_url text
+created_at timestamptz
+💰 2️⃣ Sistema financeiro
+carteira do usuário
+wallets
+
+Campos:
+
+id uuid
+user_id uuid
+balance integer
+created_at timestamptz
+compra de moedas
+coin_purchases
+
+Campos:
+
+id uuid
+user_id uuid
+coins integer
+amount_paid numeric
+created_at timestamptz
+🎁 3️⃣ Sistema de presentes
+catálogo de presentes
+gifts
+
+Campos:
+
+id uuid
+name text
+price integer
+animation_url text
+transações de presentes
+gift_transactions
+
+Campos:
+
+id uuid
+stream_id uuid
+sender_id uuid
+receiver_id uuid
+gift_id uuid
+amount integer
+created_at timestamptz
+ganhos do criador
+creator_earnings
+
+Campos:
+
+id uuid
+creator_id uuid
+amount integer
+source text
+created_at timestamptz
+saques
+withdrawals
+
+Campos:
+
+id uuid
+creator_id uuid
+amount numeric
+status text
+created_at timestamptz
+🎥 4️⃣ Sistema de lives
+streams
+streams
+
+Campos:
+
+id uuid
+creator_id uuid
+title text
+started_at timestamptz
+ended_at timestamptz
+chat da live
+messages
+
+Campos:
+
+id uuid
+stream_id uuid
+user_id uuid
+content text
+created_at timestamptz
+curtidas da live
+live_likes
+
+Campos:
+
+id uuid
+stream_id uuid
+user_id uuid
+created_at timestamptz
+👥 5️⃣ Sistema social
+seguidores
+followers
+
+Campos:
+
+id uuid
+follower_id uuid
+creator_id uuid
+created_at timestamptz
+notificações
+notifications
+
+Campos:
+
+id uuid
+user_id uuid
+type text
+content text
+created_at timestamptz
+
+Tipos possíveis:
+
+live_started
+gift_received
+new_follower
+vip_reward
+👑 6️⃣ Sistema VIP
+planos
+subscription_plans
+
+Campos:
+
+id uuid
+name text
+price numeric
+duration_days integer
+assinaturas
+subscriptions
+
+Campos:
+
+id uuid
+user_id uuid
+plan_id uuid
+started_at timestamptz
+expires_at timestamptz
+📺 7️⃣ Sistema de propaganda recompensada
+
+Modelo definido:
+
+3 anúncios → 5 minutos VIP
+máximo 25 minutos/dia
+
+Tabela:
+
+ad_rewards
+
+Campos:
+
+id uuid
+user_id uuid
+ads_watched integer
+reward_minutes integer
+created_at timestamptz
+expires_at timestamptz
+🎁 8️⃣ VIP por envio de presentes
+
+Tabela:
+
+gift_rewards
+
+Campos:
+
+id uuid
+user_id uuid
+gift_value integer
+reward_minutes integer
+created_at timestamptz
+expires_at timestamptz
+🏆 9️⃣ Ranking de presentes da live
+
+Tabela:
+
+live_gift_leaderboard
+
+Campos:
+
+id uuid
+stream_id uuid
+user_id uuid
+total_sent integer
+updated_at timestamptz
+🧹 🔟 Limpeza automática
+
+Mensagens removidas após:
+
+24 horas
+
+Estratégia:
+
+DELETE FROM messages
+WHERE created_at < now() - interval '24 hours';
+
+Executado por cron.
+
+🧠 Fluxo geral da aplicação
+Usuário entra na live
+↓
+assiste streaming (LiveKit)
+↓
+envia mensagens (Supabase realtime)
+↓
+envia presentes
+↓
+criador recebe ganhos
+↓
+usuário ganha VIP por:
+    anúncios
+    presentes
+    assinatura
+🚀 Próximo passo ideal
+
+Agora que o modelo do banco está definido, o próximo passo lógico seria criar 3 funções principais no Supabase:
+
+1️⃣ enviar presente
+2️⃣ liberar VIP por anúncios
+3️⃣ liberar VIP por presentes
+
+Essas funções controlam toda economia da plataforma.
+
+
+
+
+
+
+     IA SUPABASE
+
+Você é um arquiteto de banco de dados especialista em Supabase e PostgreSQL.
+
+Crie o esquema completo para uma plataforma de live streaming com economia virtual, presentes, recompensas e sistema VIP.
+
+A plataforma utiliza LiveKit para streaming em tempo real e Supabase para backend.
+
+Requisitos principais da aplicação:
+
+1. SISTEMA DE USUÁRIOS
+
+Usuários são autenticados via Supabase Auth.
+
+Crie uma tabela chamada profiles com os campos:
+
+* id (uuid, referência para auth.users)
+* username (text)
+* avatar_url (text)
+* created_at (timestamptz default now())
+
+Cada usuário deve ter apenas um profile.
+
+---
+
+2. SISTEMA DE STREAMING
+
+Crie uma tabela streams com:
+
+* id (uuid primary key)
+* creator_id (uuid referência profiles.id)
+* title (text)
+* started_at (timestamptz)
+* ended_at (timestamptz)
+
+Uma live é considerada ativa quando ended_at é NULL.
+
+---
+
+3. CHAT DA LIVE
+
+Crie tabela messages:
+
+* id uuid primary key
+* stream_id uuid referência streams.id
+* user_id uuid referência profiles.id
+* content text
+* created_at timestamptz default now()
+
+Regras:
+
+* mensagens só podem ser enviadas quando a live estiver ativa
+* usar Row Level Security
+
+Criar policy para INSERT verificando:
+
+streams.ended_at IS NULL
+
+---
+
+4. SISTEMA DE CARTEIRA
+
+Crie tabela wallets:
+
+* id uuid primary key
+* user_id uuid referência profiles.id
+* balance integer default 0
+* created_at timestamptz default now()
+
+Cada usuário possui apenas uma wallet.
+
+---
+
+5. COMPRA DE MOEDAS
+
+Tabela coin_purchases:
+
+* id uuid
+* user_id uuid
+* coins integer
+* amount_paid numeric
+* created_at timestamptz
+
+---
+
+6. CATÁLOGO DE PRESENTES
+
+Tabela gifts:
+
+* id uuid primary key
+* name text
+* price integer
+* animation_url text
+
+---
+
+7. TRANSAÇÕES DE PRESENTES
+
+Tabela gift_transactions:
+
+* id uuid primary key
+* stream_id uuid referência streams.id
+* sender_id uuid referência profiles.id
+* receiver_id uuid referência profiles.id
+* gift_id uuid referência gifts.id
+* amount integer
+* created_at timestamptz
+
+---
+
+8. GANHOS DOS CRIADORES
+
+Tabela creator_earnings:
+
+* id uuid primary key
+* creator_id uuid
+* amount integer
+* source text
+* created_at timestamptz
+
+source pode ser:
+
+gift
+bonus
+promotion
+
+---
+
+9. SAQUES
+
+Tabela withdrawals:
+
+* id uuid primary key
+* creator_id uuid
+* amount numeric
+* status text
+* created_at timestamptz
+
+status pode ser:
+
+pending
+approved
+rejected
+paid
+
+---
+
+10. CURTIDAS DA LIVE
+
+Tabela live_likes:
+
+* id uuid
+* stream_id uuid
+* user_id uuid
+* created_at timestamptz
+
+---
+
+11. SISTEMA SOCIAL
+
+Tabela followers:
+
+* id uuid
+* follower_id uuid
+* creator_id uuid
+* created_at timestamptz
+
+---
+
+12. NOTIFICAÇÕES
+
+Tabela notifications:
+
+* id uuid
+* user_id uuid
+* type text
+* content text
+* created_at timestamptz
+
+---
+
+13. SISTEMA VIP
+
+Tabela subscription_plans:
+
+* id uuid
+* name text
+* price numeric
+* duration_days integer
+
+Tabela subscriptions:
+
+* id uuid
+* user_id uuid
+* plan_id uuid
+* started_at timestamptz
+* expires_at timestamptz
+
+---
+
+14. RECOMPENSA POR PROPAGANDA
+
+Regra:
+
+3 anúncios assistidos liberam 5 minutos VIP.
+Máximo de 25 minutos VIP por dia.
+
+Criar tabela ad_rewards:
+
+* id uuid
+* user_id uuid
+* ads_watched integer
+* reward_minutes integer
+* created_at timestamptz
+* expires_at timestamptz
+
+---
+
+15. VIP POR ENVIO DE PRESENTES
+
+Criar tabela gift_rewards:
+
+* id uuid
+* user_id uuid
+* gift_value integer
+* reward_minutes integer
+* created_at timestamptz
+* expires_at timestamptz
+
+---
+
+16. RANKING DE PRESENTES DA LIVE
+
+Tabela live_gift_leaderboard:
+
+* id uuid
+* stream_id uuid
+* user_id uuid
+* total_sent integer
+* updated_at timestamptz
+
+---
+
+17. LIMPEZA AUTOMÁTICA DO CHAT
+
+Mensagens devem ser removidas automaticamente após 24 horas.
+
+Criar função SQL que delete:
+
+messages WHERE created_at < now() - interval '24 hours'
+
+---
+
+18. SEGURANÇA
+
+Ativar Row Level Security em todas as tabelas.
+
+Criar policies para:
+
+* usuários verem apenas seus dados sensíveis
+* envio de mensagens apenas em lives ativas
+* controle de inserção em wallets e earnings via funções SQL
+
+---
+
+19. FUNÇÕES IMPORTANTES
+
+Criar funções SQL seguras para:
+
+send_gift()
+
+Fluxo:
+
+debitar wallet do sender
+registrar gift_transactions
+creditar creator_earnings
+
+---
+
+claim_ad_reward()
+
+Fluxo:
+
+verificar se usuário já atingiu 25 minutos VIP no dia
+se não → registrar ad_rewards
+definir expires_at = now() + 5 minutos
+
+---
+
+claim_gift_reward()
+
+Fluxo:
+
+verificar valor total de presentes enviados no dia
+se atingir meta → liberar VIP temporário
+
+---
+
+20. PERFORMANCE
+
+Criar índices para:
+
+messages.stream_id
+gift_transactions.stream_id
+gift_transactions.sender_id
+live_gift_leaderboard.stream_id
+
+---
+
+Gerar o SQL completo com:
+
+* tabelas
+* constraints
+* índices
+* políticas RLS
+* funções
+* triggers necessárias.

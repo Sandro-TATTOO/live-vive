@@ -1,0 +1,9 @@
+💡 DICA PROFISSIONAL (evita isso pra sempre)
+
+Depois que tudo funcionar, o ideal é travar seu ambiente:
+
+pip freeze > requirements-lock.txt
+
+ou usar:
+
+pip install pip-tools

@@ -1,0 +1,448 @@
+🧭 🔥 RESUMO-01 (AJUSTE FINAL DO SISTEMA VIP)
+⭐ 8. SISTEMA VIP (VERSÃO CORRIGIDA OFICIAL)
+📌 8.1 CONCEITO GERAL
+VIP é um sistema híbrido com duas formas de acúmulo de tempo:
+
+1. VIP por ADS (limitado)
+2. VIP por GIFTS (ilimitado em acúmulo)
+
++ VIP por assinatura (status fixo)
+📢 8.2 VIP VIA ADS (LIMITADO)
+- 3 anúncios (15–30s)
+- +5 minutos VIP por ciclo
+- LIMITE diário: 25 minutos
+⚠️ REGRA IMPORTANTE
+O limite de acúmulo só se aplica ao VIP gerado por ADS.
+
+✔ sistema de retenção gratuito
+✔ controle anti-abuso
+✔ incentivo diário
+
+🎁 8.3 VIP VIA GIFTS (ILIMITADO)
+- cada gift gera VIP time
+- acúmulo ILIMITADO
+- sem teto diário
+💡 EXEMPLO:
+básico → +2 min
+médio → +5 min
+avançado → +10 min
+super → +25 min
+
+✔ sistema livre de crescimento
+✔ incentiva consumo contínuo
+✔ motor de monetização principal
+
+💳 8.4 ASSINATURA VIP (STATUS FIXO)
+Planos:
+- diário
+- semanal
+- mensal
+
+✔ não depende de acúmulo
+✔ garante acesso VIP direto
+✔ independente de ADS e GIFTS
+
+🧠 8.5 REGRA FINAL UNIFICADA
+VIP possui 3 canais independentes:
+
+ADS → VIP TIME limitado (25 min/dia)
+GIFTS → VIP TIME ilimitado
+ASSINATURA → STATUS VIP fixo
+
+Todos coexistem no sistema.
+⚖️ 8.6 DIFERENCIAÇÃO CRÍTICA (IMPORTANTE)
+📊 ADS vs GIFTS
+ADS:
+- limitado
+- diário
+- controle anti-abuso
+
+GIFTS:
+- ilimitado
+- escalável
+- baseado em consumo real
+🔁 8.7 ACÚMULO FINAL
+VIP TIME total =
+
+VIP_ADS (com limite diário)
++
+VIP_GIFTS (sem limite)
+
+✔ ambos somam no mesmo contador
+✔ mas ADS tem teto
+✔ GIFTS não tem restrição
+
+🚨 8.8 REGRA DE CONTROLE (MUITO IMPORTANTE)
+Todo VIP time:
+
+❌ nunca pode ser manipulado no frontend
+✔ apenas via RPC (backend seguro)
+📊 VISÃO FINAL DO SISTEMA VIP (CORRIGIDA)
+            ┌──────────────┐
+            │    ADS       │
+            │ +5 min       │
+            │ LIMITADO     │
+            └──────┬───────┘
+                   │
+            ┌──────▼───────┐
+            │ VIP TIME     │
+            │ (acumulado)  │
+            └──────┬───────┘
+                   │
+            ┌──────▼───────┐
+            │  GIFTS       │
+            │ ILIMITADO    │
+            └──────┬───────┘
+                   │
+            ┌──────▼───────┐
+            │ ASSINATURA   │
+            │ STATUS VIP   │
+            └──────────────┘
+🧭 IMPACTO NO RESUMO-01
+
+Agora está oficialmente definido:
+
+✔ ADS = limitado
+✔ GIFTS = ilimitado
+✔ assinatura = status fixo
+✔ sistema híbrido equilibrado
+✔ economia mais sustentável
+
+🚀 PRÓXIMO PASSO NATURAL
+
+Agora o sistema VIP está fechado conceitualmente.
+
+Podemos avançar para:
+
+🔐 1. RPC FINAL DO VIP (recomendado)
+add_ads_vip_time()
+add_gift_vip_time()
+activate_subscription_vip()
+🎥 2. IMPLEMENTAÇÃO FLUTTER
+contador de VIP
+badge visual
+animação de ganho de tempo
+
+
+
+
+
+resumo-01 oficial
+
+
+🧭 RESUMO-01 (VERSÃO FINAL OFICIAL DO PROJETO)
+
+👉 Fonte única de verdade da arquitetura, regras e decisões do sistema
+
+🚀 1. VISÃO GERAL DO PROJETO
+Plataforma de Live Streaming social com:
+- vídeo em tempo real (LiveKit)
+- chat realtime (Supabase)
+- sistema de economia (gifts, wallet, earnings)
+- VIP híbrido (ads + gifts + assinatura)
+- mobile (Flutter) + web (Flutter Web)
+- backend de regras (FastAPI)
+- banco principal (Supabase)
+🧱 2. ARQUITETURA OFICIAL
+Flutter (Frontend)
+        ↓
+FastAPI (Regras + Segurança + RPC + LiveKit Tokens)
+        ↓
+Supabase (Dados + RLS + Realtime)
+        ↓
+LiveKit (Streaming de vídeo/audio)
+👥 3. TIPOS DE USUÁRIOS (FIXO)
+🎥 VIEWER
+- assiste lives
+- usa chat
+- envia gifts
+- recebe VIP via ads/gifts
+📡 HOST
+- cria e transmite lives
+- recebe gifts
+- visualiza earnings
+- controla stream
+🧠 REGRA CENTRAL
+VIEWER consome conteúdo
+HOST produz conteúdo
+🎥 4. STREAMING (LIVEKIT CORE)
+STREAM MODEL OFICIAL
+id (uuid)
+host_id
+title
+status (live/offline)
+started_at
+ended_at
+thumbnail_url
+viewer_count
+FLUXO
+Host inicia live → FastAPI → Supabase streams
+Viewer entra → viewer-token → LiveKit room
+Home → lista streams ativos
+💬 5. CHAT (REALTIME SUPABASE)
+messages:
+- id
+- stream_id
+- user_id
+- message
+- created_at
+
+✔ realtime via Supabase
+✔ vinculado a stream_id
+✔ chat overlay no Flutter LiveRoom
+
+🎁 6. SISTEMA DE ECONOMIA
+ENTIDADES
+gifts
+gift_transactions
+wallets
+creator_earnings
+withdrawals
+FLUXO
+Viewer envia gift
+→ FastAPI RPC
+→ wallet debitado
+→ creator_earnings creditado
+→ transaction registrada
+→ realtime update
+💰 7. WALLET (REGRA GLOBAL)
+- 1 wallet por usuário
+- saldo controlado por backend
+- proibido update direto do frontend
+⭐ 8. SISTEMA VIP (FINAL)
+📌 CONCEITO
+VIP é híbrido:
+1. tempo acumulativo
+2. assinatura fixa
+📢 ADS (LIMITADO)
+- 3 anúncios (15–30s)
+- +5 min VIP
+- limite: 25 min/dia
+🎁 GIFTS (ILIMITADO)
+- cada gift gera VIP time
+- sem limite de acúmulo
+💳 ASSINATURA
+- diário
+- semanal
+- mensal
+- status VIP fixo
+🧠 REGRA FINAL
+ADS → limitado
+GIFTS → ilimitado
+ASSINATURA → status fixo
+🔐 9. SEGURANÇA (CRÍTICA)
+- frontend nunca altera dinheiro
+- tudo financeiro via RPC
+- Supabase protegido por RLS
+RLS BASE
+SELECT → owner/public controlado
+INSERT → auth.uid()
+UPDATE → owner
+DELETE → owner ou RPC
+⚙️ 10. RPCs (CORE DO SISTEMA)
+send_gift()
+add_wallet_balance()
+add_vip_time_ads()
+add_vip_time_gift()
+create_stream()
+end_stream()
+📱 11. FRONTEND FLUTTER
+TELAS
+- HomeScreen (grid lives)
+- LiveRoomScreen (LiveKit + chat overlay)
+- RoleSelection (viewer/host)
+- ChatPuro (base realtime)
+COMPONENTES
+- LiveCard (thumbnail + viewers)
+- ChatOverlay
+- GiftPanel
+- VIP Badge
+🏠 12. HOME (DISCOVERY)
+GET /streams/live
+→ lista lives ativas
+→ thumbnails + viewers + status
+🎬 13. LIVE ROOM (CORE EXPERIENCE)
+- LiveKit fullscreen
+- chat overlay realtime
+- gifts button
+- VIP status indicator
+📢 14. ADS SYSTEM
+- rewarded video
+- 3 por ciclo
+- +5 min VIP
+- limite 25 min/dia
+🧠 15. ESTADO ATUAL DO PROJETO
+✔ LiveKit funcionando
+✔ Supabase realtime funcionando
+✔ Flutter base pronta
+✔ backend FastAPI estruturado
+⚠️ RPC ainda não implementado
+⚠️ RLS ainda precisa fechamento final
+🧭 16. DECISÕES ESTRATÉGICAS
+- LiveKit → streaming oficial
+- Supabase → dados + realtime
+- FastAPI → regras + dinheiro + tokens
+- VIP híbrido (ads + gifts + assinatura)
+- gifts como principal monetização
+- wallet centralizada no backend
+🚀 17. DIREÇÃO DO PRÓXIMO PASSO
+
+Agora o projeto está em estado:
+
+🔥 PRONTO PARA CONSOLIDAÇÃO FINAL
+Ordem ideal:
+1. Fechar RPC (economia + VIP)
+2. Ajustar RLS final
+3. Finalizar Home + LiveRoom UX
+4. Evoluir escala (ranking, analytics)
+🧠 FINAL
+✔ RESUMO-01 agora é:
+Fonte única do sistema contendo:
+- arquitetura completa
+- usuários
+- streaming
+- chat
+- economia
+- VIP
+- segurança
+- frontend
+- backend
+- regras de negócio
+
+
+
+
+
+
+🧭 RESUMO-01 (VERSÃO FINAL BLOQUEADA / BASE OFICIAL DO PROJETO)
+
+⚠️ Esta versão é considerada baseline arquitetural
+Alterações futuras devem ser feitas como “RESUMO-01.1, 01.2…”
+
+
+🚀 1. STACK OFICIAL DO PROJETO
+📱 FRONTEND
+Flutter 3.19+- provider 6.1.2- supabase_flutter 2.6.1- http 1.6.0- livekit_client 2.7.0
+✔ Multi-platform: Android / iOS / Web / Desktop
+✔ State management: Provider
+✔ Realtime: Supabase
+✔ Video: LiveKit
+
+⚙️ BACKEND (REGRAS + SEGURANÇA)
+FastAPI 0.110+- uvicorn[standard]- python-dotenv- pydantic- python-jose- passlib[bcrypt]- httpx- python-multipart- supabase-py- livekit-api
+✔ Responsável por:
+
+
+RPCs
+
+
+regras financeiras
+
+
+tokens LiveKit
+
+
+validação de segurança
+
+
+
+🗄️ BANCO DE DADOS
+Supabase (PostgreSQL)- RLS obrigatório em todas tabelas- Realtime habilitado (messages, streams)- RPCs para lógica crítica
+
+🎥 STREAMING
+LiveKit Cloud- rooms dinâmicas- viewer/host tokens via FastAPI- suporte a publish/subscribe/data
+
+🧱 2. ARQUITETURA OFICIAL
+Flutter   ↓FastAPI (regras + segurança + RPC + tokens)   ↓Supabase (dados + realtime + RLS)   ↓LiveKit (vídeo em tempo real)
+
+👥 3. TIPOS DE USUÁRIO (FIXO)
+VIEWER → consome conteúdoHOST → cria conteúdoADMIN → controla plataforma + recompensa usuários
+
+🎥 4. STREAMS (LIVE)
+idhost_idtitlestatus (live/offline)started_atended_atthumbnail_urlviewer_count
+✔ HomeScreen mostra lives ativas
+✔ LiveRoom conecta via LiveKit
+✔ Chat integrado via Supabase
+
+💬 5. CHAT REALTIME
+messages:- id- stream_id- user_id- message- created_at
+✔ Supabase Realtime
+✔ Overlay no LiveRoom
+✔ Index por stream_id obrigatório
+
+🎁 6. ECONOMIA DO SISTEMA
+Tabelas:- wallets- gifts- gift_transactions- creator_earnings- withdrawals
+✔ tudo controlado por backend (RPC)
+✔ frontend nunca altera saldo direto
+
+💰 7. WALLET RULE (CRÍTICO)
+- 1 wallet por usuário- saldo atualizado apenas via RPC- auditável
+
+⭐ 8. SISTEMA VIP (FINAL BLOQUEADO)
+📌 CONCEITO
+VIP = sistema híbrido:- tempo acumulado- status fixo (assinatura)
+
+📢 ADS (LIMITADO)
+- 3 anúncios- +5 min VIP- limite 25 min/dia
+
+🎁 GIFTS (ILIMITADO)
+- +VIP time por gift- sem limite
+
+👑 ADMIN VIP (MANUAL)
+- concedido pelo admin- sem regras automáticas- usado para recompensa
+
+💳 ASSINATURA
+- diário- semanal- mensal- status VIP fixo
+
+🧠 REGRA FINAL
+ADS → limitadoGIFTS → ilimitadoADMIN → manualASSINATURA → fixo
+
+🔐 9. SEGURANÇA GLOBAL
+- RLS obrigatório em todas tabelas- RPC para qualquer ação crítica- frontend nunca acessa lógica financeira direta- ADMIN validado via backend
+
+⚙️ 10. RPCs OFICIAIS
+- create_stream()- end_stream()- send_gift()- update_wallet()- add_vip_time_ads()- add_vip_time_gift()- add_vip_time_admin()- create_withdrawal()
+
+🏠 11. FRONTEND (FLUTTER)
+TELAS OFICIAIS
+- HomeScreen (grid lives)- LiveRoomScreen (LiveKit + chat overlay)- RoleSelection- ChatPuro (base)
+
+COMPONENTES
+- LiveCard (thumbnail + viewers)- ChatOverlay- GiftPanel- VIPBadge
+
+🎥 12. LIVE EXPERIENCE
+Home → Live list   ↓LiveRoom   ↓LiveKit stream   ↓Chat + Gifts + VIP overlay
+
+📢 13. ADS SYSTEM
+- rewarded video- 3 ciclos/dia- +5 min VIP- limite 25 min/dia
+
+👑 14. ADMIN SYSTEM
+Admin pode:- banir usuários- moderar chats- encerrar lives- auditar finanças- conceder VIP time manual
+
+🧠 15. ESTADO ATUAL DO PROJETO
+✔ LiveKit funcional✔ Supabase realtime funcional✔ Flutter base estruturado✔ Backend FastAPI estruturado⚠ RPCs ainda incompletos⚠ ajustes finais de RLS pendentes
+
+🚀 16. DIREÇÃO OFICIAL
+FASE 1 → RPC + segurança finalFASE 2 → LiveRoom completoFASE 3 → economia + giftsFASE 4 → escala + ranking + analytics
+
+🧭 17. STATUS DO RESUMO-01
+✔ DEFINIDO✔ CONSOLIDADO✔ BLOQUEADO COMO BASE OFICIAL✔ PRONTO PARA IMPLEMENTAÇÃO
+
+⚠️ REGRA FINAL DO SISTEMA
+Qualquer mudança futura NÃO substitui este resumo.Apenas adiciona versões incrementais:RESUMO-01.1, 01.2, etc.
+
+🚀 FECHAMENTO
+Agora você tem:
+✔ arquitetura completa
+✔ dependências oficiais
+✔ regras de negócio fechadas
+✔ economia definida
+✔ VIP consolidado
+✔ admin estruturado
+✔ base pronta para build real
+
+Se quiser o próximo passo natural agora, eu recomendo:
+👉 “ORDEM EXATA DE IMPLEMENTAÇÃO (checklist de construção sem erro)”
+ou
+👉 “RPCs finais completas prontas para colar no Supabase + FastAPI”
+Só me diga 👍
