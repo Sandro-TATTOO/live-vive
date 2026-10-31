@@ -34,12 +34,6 @@ class _HostLiveScreenState extends State<HostLiveScreen> {
     return uuidRegex.hasMatch(s);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _startLive();
-  }
-
   Future<void> _startLive() async {
     try {
       // 1. Criar stream no backend
